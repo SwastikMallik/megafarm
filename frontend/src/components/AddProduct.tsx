@@ -5,9 +5,11 @@ const AddProduct = () => {
     const [product, setProduct] = useState({
         pname: "",
         category: "",
-        quantity: "",
+        quantity: 0,
         price: 0
     })
+
+    const [error, setError] = useState({})
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -18,9 +20,25 @@ const AddProduct = () => {
         }))
     }
 
+    const validateFormData = () => {
+        const getErrors = {}
+        if(!product.pname) getErrors.name="Product name can't be blank" 
+        if(!product.category) getErrors.category="Product category can't be blank" 
+        if(product.quantity==0) getErrors.quantity="Product quantity can't be blank"
+        if(product.price == 0) getErrors.price="Product price can't be blank" 
+
+        setError(getErrors)
+
+        console.warn(getErrors)
+        return getErrors
+    }
+
     const saveProduct = function(e){
         e.preventDefault();
-        console.log(product)
+        const valLength = Object.keys(validateFormData()).length
+        if(valLength === 0){
+            console.log("call the API to save the data")
+        }
     }
     return (
         <>
@@ -39,7 +57,7 @@ const AddProduct = () => {
                 <label>Enter Quantity</label><br/>
                 <input type="number" name="quantity" defaultValue={product.quantity} onChange={handleChange} /><br/>
                 <label>Price:</label><br/>
-                <input type="text" name="price" defaultValue={product.price} onChange={handleChange}/><br/><br/>
+                <input type="number" name="price" defaultValue={product.price} onChange={handleChange}/><br/><br/>
                 <button>Submit</button>
             </form> 
         </>
