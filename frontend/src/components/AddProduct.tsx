@@ -33,35 +33,73 @@ const AddProduct = () => {
         return getErrors
     }
 
-    const saveProduct = function(e){
+
+
+    const saveProduct = async function(e){
         e.preventDefault();
         const valLength = Object.keys(validateFormData()).length
         if(valLength === 0){
             console.log("call the API to save the data")
+            console.log(product)
+            try{
+                const res = await fetch("http://localhost:5001/")
+                const json = await res.json();
+                console.log(json);
+            } catch(err) {
+                console.error(err.message);
+            }
+        } else {
+            console.warn("Validation failed")
         }
     }
     return (
         <>
             <h1>Add Product Page</h1>
             <Header />
-            <form onSubmit={saveProduct}>
-                <label>Product name:</label><br/>
-                <input type="text" name="pname" defaultValue={product.pname} onChange={handleChange}/><br/>
-                <label>Select Category:</label><br/>
+            <form style={styles.form} onSubmit={saveProduct}>
+                <label>Product name:</label>
+                <input type="text" name="pname" defaultValue={product.pname} onChange={handleChange}/>
+                {
+                   error.name && <div style={styles.error}>{error.name}</div>
+                }
+                <label>Select Category:</label>
                 <select name="category" onChange={handleChange}>
                     <option>Select Category</option>
                     <option value="Cloth">Cloth</option>
                     <option value="Food">Food</option>
                     <option value="Beauty Product">Beauty Product</option>
-                </select><br/>
-                <label>Enter Quantity</label><br/>
-                <input type="number" name="quantity" defaultValue={product.quantity} onChange={handleChange} /><br/>
-                <label>Price:</label><br/>
-                <input type="number" name="price" defaultValue={product.price} onChange={handleChange}/><br/><br/>
+                </select>
+                {
+                    error.category && <div style={styles.error}>{error.category}</div>
+                }
+                <label>Enter Quantity</label>
+                <input type="number" name="quantity" defaultValue={product.quantity} onChange={handleChange} />
+                {
+                    error.quantity && <div style={styles.error}>{error.quantity}</div>
+                }
+                <label>Price:</label>
+                <input type="number" name="price" defaultValue={product.price} onChange={handleChange}/>
+                {
+                    error.price && <div style={styles.error}>{error.price}</div>
+                }
                 <button>Submit</button>
             </form> 
         </>
     )
 }
+
+const styles = {
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      maxWidth: "400px",
+      margin: "0 auto",
+      gap: "10px",
+    },
+    error: {
+      color: "red",
+      fontSize: "0.8rem",
+    },
+  };
 
 export default AddProduct
