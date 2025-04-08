@@ -1,10 +1,22 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './App.css'
+import Home from './components/Home'
+import AddProduct from './components/AddProduct'
 
 function App() {
-
+  const router = createBrowserRouter([
+    {
+      path : '/',
+      element : <Home />
+    },
+    {
+      path : 'dashboard/add-product',
+      element : <AddProduct />
+    }
+  ])
   return (
     <>
-      <h1>Megafarm</h1>
+      <RouterProvider router={router}/>
     </>
   )
 }
