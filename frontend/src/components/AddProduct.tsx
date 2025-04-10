@@ -42,11 +42,16 @@ const AddProduct = () => {
             console.log("call the API to save the data")
             console.log(product)
             try{
-                const res = await fetch("http://localhost:5001/")
+                const res = await fetch("http://localhost:5001/", {
+                    mode: 'no-cors'
+                })
+                if(res.status != 200){
+                    throw new Error(`Error is ${res.status}`)
+                }
                 const json = await res.json();
                 console.log(json);
             } catch(err) {
-                console.error(err.message);
+                console.error("Error message");
             }
         } else {
             console.warn("Validation failed")
