@@ -4,7 +4,14 @@ const cors = require("cors");
 
 const app = express();
 
+const mongoose = require('mongoose')
 
+mongoose.connect('mongodb+srv://swastik25:Mongodb2520@no-sql-learning.wfhnsdu.mongodb.net/?retryWrites=true&w=majority&appName=no-sql-learning')
+.then((result) => console.log('connected to db'))
+.catch((err) => console.log(err));
+
+
+const User = require("./models/userModel")
 
 app.use(express.json());
 
