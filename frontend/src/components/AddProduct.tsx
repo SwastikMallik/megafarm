@@ -42,11 +42,20 @@ const AddProduct = () => {
             console.log("call the API to save the data")
             console.log(product)
             try{
-                const res = await fetch("http://localhost:5001/")
-                if(res.status != 200){
-                    throw new Error(`Error is ${res.status}`)
-                }
+                const res = await fetch("http://localhost:5001/add-product", {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application-json'
+                    },
+                    body: JSON.stringify(
+                        product
+                    )
+                })
+                
                 const json = await res.json();
+                if(json.status != 200){
+                    throw new Error(`Error is ${json.status}`)
+                }
                 console.log(json);
             } catch(err) {
                 console.error(`${err.status} Error message`);
