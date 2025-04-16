@@ -11,7 +11,7 @@ mongoose.connect('mongodb+srv://swastik25:Mongodb2520@no-sql-learning.wfhnsdu.mo
 .catch((err) => console.log(err));
 
 
-const Products = require("./models/productModel")
+const productModel = require("./models/Product")
 
 app.use(express.json());
 
@@ -27,14 +27,15 @@ app.get("/", (req, res)=>{
     res.send(newRes)
 })
 
-app.post("/add-product", (req, res)=>{
+app.post("/add-product", async(req, res)=>{
     console.log(req.body)
+    const result = await productModel.collection.insertOne(req.body)
     const newRes = {
         status : 200,
         data : "Hello, Welcome to MegaFarm",
         message : "No new message"
     }
-    res.send(req.body)
+    res.send(result)
 })
 
 app.listen(5001)
