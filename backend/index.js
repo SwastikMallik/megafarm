@@ -8,7 +8,8 @@ mongoose.connect('mongodb+srv://swastik25:Mongodb2520@no-sql-learning.wfhnsdu.mo
 .then((result) => console.log('connected to db'))
 .catch((err) => console.log(err));
 
-const productModel = require("./models/Product")
+const productModel = require("./models/Product");
+const Product = require("./models/Product");
 
 const app = express();
 
@@ -39,6 +40,15 @@ app.post("/add-product", async (req, res)=>{
         }
         res.send(result)
     }
+})
+
+app.get("/products", async (req, res)=>{
+    try {
+        const products = await productModel.find();
+        res.json(products);
+      } catch (err) {
+        res.status(500).json({ message: "Error getting products", error: err });
+      }
 })
 
 app.listen(5002)

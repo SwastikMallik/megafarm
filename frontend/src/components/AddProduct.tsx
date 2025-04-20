@@ -87,7 +87,7 @@ const AddProduct = () => {
                 {
                     error.quantity && <div style={styles.error}>{error.quantity}</div>
                 }
-                <label>Price:</label>
+                <label>Unit Price:</label>
                 <input type="number" name="price" defaultValue={product.price} onChange={handleChange}/>
                 {
                     error.price && <div style={styles.error}>{error.price}</div>
