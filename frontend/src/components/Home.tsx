@@ -1,35 +1,35 @@
-import { useState, useCallback } from "react"
+import { useState, useEffect } from "react"
 import Header from "./Header"
-import MyChild from "./MyChild"
 
 const Home = () => {
-    const [change, setChange] = useState(0);
+    const [product, setProduct] = useState([]);
 
-    const getAllProducts = useCallback(function(){
-        const check = {
-            data : {
-                pname : "Lux"
-            }
-        }
-        console.log("123")
-        return check.data.pname
-    },[])
-
-    function checkAgain(){
-        setChange(change + 1)
-        console.log(321)
+    const getAllProducts = async function(){
+        const res = await fetch("http://localhost:5002/products")
+                    .then((res)=>res.json())
+                    .then((res)=>setProduct(res))     
     }
+    //console.log(product, " products") 
+
+    useEffect(()=>{
+        getAllProducts()
+    },[])
 
     return (
         <>
             <h1>Home Page</h1>
             <Header />
-            <div onClick={() => checkAgain()}>
-                Click me !!! {change}
-            </div>
-            <MyChild products={getAllProducts}/>
-            
-            
+            {
+                product.map(item=>
+                    <ul className="ul-list" key={item._id}>
+                        <li>{item.pname}</li>
+                        <li>{item.category}</li>
+                        <li>{item.quantity}</li>
+                        <li>{item.price}</li>
+                        <li><a href="#">Edit</a></li>
+                    </ul>
+                )
+            }
         </>
     )
 }
