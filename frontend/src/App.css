@@ -18,6 +18,8 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.blck{color:#000}
+
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
