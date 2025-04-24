@@ -46,9 +46,24 @@ app.get("/products", async (req, res)=>{
     try {
         const products = await productModel.find();
         res.json(products);
-      } catch (err) {
+      } 
+      catch (err) {
         res.status(500).json({ message: "Error getting products", error: err });
       }
+})
+
+app.get("/product/:id", async (req, res)=>{
+    try{
+        const getProductById = await productModel.findById(req.params.id)
+        console.log(getProductById)
+        if (!getProductById) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        res.status(200).json(getProductById)
+    } catch(err){
+        //console.log("000", err)
+        res.status(500).json({ error: 'Server error' });
+    }
 })
 
 app.listen(5002)

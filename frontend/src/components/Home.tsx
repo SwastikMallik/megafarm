@@ -26,6 +26,11 @@ const Home = () => {
         console.log(id, "Hello, Edit")
         modal.style.display = "block";
         setSelectionID(id)
+        // fetch product data from DB using product ID
+        const res = fetch(`http://localhost:5002/product/${id}`)
+                                      .then((res)=>res.json())
+                                      .then(()=>{console.log(res)})
+        console.warn(res)
     }
 
     const closeModal = function(){
@@ -58,9 +63,6 @@ const Home = () => {
                     </ul>
                 )
             }
-            {selectionID}
-
-            <button id="myBtn">Open Modal</button>
 
             <div id="myModal" className="modal">
 
