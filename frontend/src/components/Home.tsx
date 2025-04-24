@@ -22,14 +22,14 @@ const Home = () => {
 
     const modal = document.getElementById("myModal");
 
-    const openModal = function(id){
+    const openModal = async function(id){
         console.log(id, "Hello, Edit")
         modal.style.display = "block";
         setSelectionID(id)
         // fetch product data from DB using product ID
-        const res = fetch(`http://localhost:5002/product/${id}`)
+        const res = await fetch(`http://localhost:5002/product/${id}`)
                                       .then((res)=>res.json())
-                                      .then(()=>{console.log(res)})
+                                      //.then(()=>{//console.log(res)})
         console.warn(res)
     }
 
