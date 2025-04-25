@@ -3,7 +3,10 @@ import Header from "./Header"
 
 const Home = () => {
     const [product, setProduct] = useState([]);
+    const [openModal, setOpenModal] = useState(false)
     const [selectionID, setSelectionID] = useState(null)
+    const [data, setData] = useState({})
+
 
     const getAllProducts = async function(){
         const res = await fetch("http://localhost:5002/products")
@@ -16,38 +19,36 @@ const Home = () => {
         getAllProducts()
     },[])
 
+    useEffect(()=>{
+        const handleClickOutside = (event) =>{
+            if(openModal && event.target.className=="modal"){
+                setOpenModal(false)
+            }
+        }
+        window.addEventListener("click", handleClickOutside)
+        return () => window.removeEventListener("click", handleClickOutside)
+    }, [openModal])
+
     //Edit Product detail
 
     // Get the modal
 
-    const modal = document.getElementById("myModal");
-
-    const openModal = async function(id){
-        console.log(id, "Hello, Edit")
-        modal.style.display = "block";
+    const editFormModal = async function(id){
+        setOpenModal(true)
         setSelectionID(id)
-        // fetch product data from DB using product ID
-        const res = await fetch(`http://localhost:5002/product/${id}`)
-                                      .then((res)=>res.json())
-                                      //.then(()=>{//console.log(res)})
-        console.warn(res)
-    }
-
-    const closeModal = function(){
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-          if (event.target == modal) {
-            modal.style.display = "none";
-          }
+        try{ 
+            // fetch product data from DB using product ID
+            const res = await fetch(`http://localhost:5002/product/${id}`)
+            const resJson = await res.json()
+            setData(resJson)
+        } catch(err){
+            console.log(err)
         }
-    
-    
-    
-
-    
-
+        
+    }
+    const closeModal = function(){
+        setOpenModal(false)
+    }
     return (
         <>
             <h1>Home Page</h1>
@@ -59,19 +60,19 @@ const Home = () => {
                         <li>{item.category}</li>
                         <li>{item.quantity}</li>
                         <li>{item.price}</li>
-                        <li><a onClick={openModal.bind(null, item._id)}>Edit</a></li>
+                        <li><a onClick={editFormModal.bind(null, item._id)}>Edit</a></li>
                     </ul>
                 )
             }
-
-            <div id="myModal" className="modal">
+            
+            {openModal && (<div id="myModal" className="modal">
 
                 <div className="modal-content">
                     <span onClick={closeModal} className="close">&times;</span>
                     <p className="blck">{selectionID}</p>
                 </div>
 
-            </div>
+            </div>)}
         </>
     )
 }
