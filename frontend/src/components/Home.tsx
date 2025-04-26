@@ -6,6 +6,7 @@ const Home = () => {
     const [openModal, setOpenModal] = useState(false)
     const [selectionID, setSelectionID] = useState(null)
     const [data, setData] = useState({})
+    //const [updateData, setUpdateData] = useState({})
 
 
     const getAllProducts = async function(){
@@ -56,8 +57,20 @@ const Home = () => {
     }
 
     //edit form
+
+    const handleChange = (e) => {
+        e.preventDefault()
+        const {name, value} = e.target
+        console.log(`name: ${name} & value: ${value}`)
+        setData({
+            ...data,
+            [name] : value
+        })
+    }
+    console.log(data)
     const editFormData = (e) => {
         e.preventDefault();
+
         console.log("submit edit form")
     }
     return (
@@ -85,27 +98,27 @@ const Home = () => {
 
                         <form onSubmit={editFormData}>
                             <input type="hidden" name="_id" defaultValue={data._id}/>
-                            <label className="blck" for="pname">
+                            <label className="blck" htmlFor="pname">
                                 Product Name : 
                             </label>
-                            <input type="text" name="pname" id="pname" defaultValue={data.pname}/><br/>
-                            <label className="blck" for="cat">
+                            <input type="text" name="pname" id="pname" defaultValue={data.pname} onChange={handleChange}/><br/>
+                            <label className="blck" htmlFor="cat">
                                 Category : 
                             </label>
-                            <select name="category" id="cat" value={data.category}>
+                            <select name="category" id="cat" value={data.category} onChange={handleChange}>
                                 <option>Select Category</option>
                                 <option value="Cloth">Cloth</option>
                                 <option value="Food">Food</option>
                                 <option value="Beauty Product">Beauty Product</option>
                             </select><br/>
-                            <label className="blck" for="quantity">
+                            <label className="blck" htmlFor="quantity">
                                 Quantity : 
                             </label>
-                            <input type="text" name="quantity" id="quantity" defaultValue={data.quantity}/><br/>
-                            <label className="blck" for="price">
+                            <input type="text" name="quantity" id="quantity" defaultValue={data.quantity} onChange={handleChange}/><br/>
+                            <label className="blck" htmlFor="price">
                                 Price : 
                             </label>
-                            <input type="text" name="price" id="price" defaultValue={data.price}/>
+                            <input type="text" name="price" id="price" defaultValue={data.price} onChange={handleChange}/>
                             <br/>
                             <br/>
                             <button> Submit </button>
