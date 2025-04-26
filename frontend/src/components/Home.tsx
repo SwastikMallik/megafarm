@@ -32,22 +32,33 @@ const Home = () => {
     //Edit Product detail
 
     // Get the modal
-
     const editFormModal = async function(id){
-        setOpenModal(true)
         setSelectionID(id)
         try{ 
             // fetch product data from DB using product ID
             const res = await fetch(`http://localhost:5002/product/${id}`)
-            const resJson = await res.json()
-            setData(resJson)
-        } catch(err){
-            console.log(err)
+            if(!res.ok){
+                throw new Error(`Server error: ${res.status}`)
+            } else {
+                const resJson = await res.json()
+                console.log("waswas", res)
+                setData(resJson)
+                setOpenModal(true)
+            }
+        } catch(error){
+            console.log("Logs : ", error)
         }
         
     }
+    //console.log("response data", data)
     const closeModal = function(){
         setOpenModal(false)
+    }
+
+    //edit form
+    const editFormData = (e) => {
+        e.preventDefault();
+        console.log("submit edit form")
     }
     return (
         <>
@@ -65,14 +76,44 @@ const Home = () => {
                 )
             }
             
-            {openModal && (<div id="myModal" className="modal">
+            { 
+                openModal && (<div id="myModal" className="modal">
 
-                <div className="modal-content">
-                    <span onClick={closeModal} className="close">&times;</span>
-                    <p className="blck">{selectionID}</p>
-                </div>
+                    <div className="modal-content">
+                        <span onClick={closeModal} className="close">&times;</span>
+                        <p className="blck">{selectionID}</p>
 
-            </div>)}
+                        <form onSubmit={editFormData}>
+                            <input type="hidden" name="_id" defaultValue={data._id}/>
+                            <label className="blck" for="pname">
+                                Product Name : 
+                            </label>
+                            <input type="text" name="pname" id="pname" defaultValue={data.pname}/><br/>
+                            <label className="blck" for="cat">
+                                Category : 
+                            </label>
+                            <select name="category" id="cat" value={data.category}>
+                                <option>Select Category</option>
+                                <option value="Cloth">Cloth</option>
+                                <option value="Food">Food</option>
+                                <option value="Beauty Product">Beauty Product</option>
+                            </select><br/>
+                            <label className="blck" for="quantity">
+                                Quantity : 
+                            </label>
+                            <input type="text" name="quantity" id="quantity" defaultValue={data.quantity}/><br/>
+                            <label className="blck" for="price">
+                                Price : 
+                            </label>
+                            <input type="text" name="price" id="price" defaultValue={data.price}/>
+                            <br/>
+                            <br/>
+                            <button> Submit </button>
+                        </form>
+                    </div>
+
+                </div>) 
+            }
         </>
     )
 }
