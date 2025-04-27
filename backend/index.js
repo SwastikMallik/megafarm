@@ -30,7 +30,7 @@ app.get("/", (req, res)=>{
 })
 
 app.post("/add-product", async (req, res)=>{
-    console.log(req?.body, "sasasas")
+    //console.log(req?.body, "sasasas")
     if(req.body != "undefined"){
         const result = await productModel.collection.insertOne(req.body)
         const newRes = {
@@ -64,6 +64,20 @@ app.get("/product/:id", async (req, res)=>{
         //console.log("000", err)
         res.status(500).json({ error: 'Server error' });
     }
+})
+
+app.put("/product/:id", async (req, res)=>{
+    try{
+        const filter = {_id:req.params.id}
+        const updateDocument = {$set: req.body}
+        const updateData = await productModel.updateOne(filter, updateDocument)
+        console.log(updateData)
+        res.send(updateData)
+    } catch(error){
+        console.log(`Logs are: ${error}`)
+    }
+
+
 })
 
 app.listen(5002)
