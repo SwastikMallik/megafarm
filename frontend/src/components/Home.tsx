@@ -18,8 +18,7 @@ const Home = () => {
 
     useEffect(()=>{
         getAllProducts()
-        console.log(data)
-    },[data])
+    },[product])
 
     useEffect(()=>{
         const handleClickOutside = (event) =>{
@@ -101,6 +100,7 @@ const Home = () => {
                 })
                 if(updatedFormData.ok){
                     const responseData = await updatedFormData.json()
+                    setOpenModal(false)
                     console.log(responseData, "Form updated")
                 } else {
                     throw new Error(`${updatedFormData.status}`)
