@@ -9,7 +9,7 @@ mongoose.connect('mongodb+srv://swastik25:Mongodb2520@no-sql-learning.wfhnsdu.mo
 .catch((err) => console.log(err));
 
 const productModel = require("./models/Product");
-const Product = require("./models/Product");
+const User = require("./models/User");
 
 const app = express();
 
