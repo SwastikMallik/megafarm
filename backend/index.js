@@ -33,11 +33,6 @@ app.post("/add-product", async (req, res)=>{
     //console.log(req?.body, "sasasas")
     if(req.body != "undefined"){
         const result = await productModel.collection.insertOne(req.body)
-        const newRes = {
-            status : 200,
-            data : "Hello, Welcome to MegaFarm",
-            message : "No new message"
-        }
         res.send(result)
     }
 })
@@ -78,6 +73,76 @@ app.put("/product/:id", async (req, res)=>{
     }
 
 
+})
+
+app.post("/signup", (req, res)=>{
+    let error = {}
+    let uname = req.body.username
+    let eid = req.body.emailid
+    let pswd = req.body.password
+    let terms = req.body.terms
+
+    if(!uname){
+        error.username = "Username can't be empty"
+    } else {
+        console.log((uname).length)
+        if((uname).length < 4){
+            error.username = "Username should minimum length of 4"
+        }
+    }
+    //console.log(req.body)
+    console.log(eid)
+    if(!eid){
+        error.email = "Email can't be empty"
+    } else {
+        let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        //let mail = "test@example.com";
+        if (regex.test(eid)) {
+            console.log("Valid Email address");
+        } else {
+            error.email = "Invalid Email address"
+            console.log("Invalid Email address");
+        }
+    }
+
+    if(!pswd){
+        error.password = "Password can't be empty"
+    } else {
+        if(pswd.length < 8){
+            error.password = "Password length must be 8 character"
+        } else {
+            function hasSpecialChars(str) {
+                return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(str);
+              }
+              //Special character check
+              if(hasSpecialChars(pswd)){
+                    console.log("Specialcase Exist"+pswd)
+                }
+            for(let i=0;i<pswd.length;i++){
+                //Lowercase check
+                if(pswd.charCodeAt(i)>=97 && pswd.charCodeAt(i)<=122){
+                    console.log("Lowercase Exist"+pswd[i])
+                }
+
+                //Uppercase check
+                if(pswd.charCodeAt(i)>=65 && pswd.charCodeAt(i)<=90){
+                    console.log("Uppercase Exist"+pswd[i])
+                }
+
+                //isNumeric check
+                if(pswd.charCodeAt(i)>=48 && pswd.charCodeAt(i)<=57){
+                    console.log("Number Exist"+pswd[i])
+                }
+            }
+        }
+    }
+
+    if(Object.keys(error).length != 0){
+        return res.send(error)
+    }
+    
+    console.log(req.body)
+    res.send(req.body)
 })
 
 app.listen(5002)
