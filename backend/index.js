@@ -4,6 +4,8 @@ const cors = require("cors");
 
 const mongoose = require('mongoose');
 
+const bcrypt = require('bcryptjs');
+
 mongoose.connect('mongodb+srv://swastik25:Mongodb2520@no-sql-learning.wfhnsdu.mongodb.net/?retryWrites=true&w=majority&appName=no-sql-learning')
 .then((result) => console.log('connected to db'))
 .catch((err) => console.log(err));
@@ -75,13 +77,15 @@ app.put("/product/:id", async (req, res)=>{
 
 })
 
-app.post("/signup", (req, res)=>{
+app.post("/signup", async (req, res)=>{
     let error = {}
     let uname = req.body.username
     let eid = req.body.emailid
     let pswd = req.body.password
     let terms = req.body.terms
 
+
+    //Username validation
     if(!uname){
         error.username = "Username can't be empty"
     } else {
@@ -90,8 +94,8 @@ app.post("/signup", (req, res)=>{
             error.username = "Username should minimum length of 4"
         }
     }
-    //console.log(req.body)
-    console.log(eid)
+    
+    //Email id validation
     if(!eid){
         error.email = "Email can't be empty"
     } else {
@@ -105,44 +109,53 @@ app.post("/signup", (req, res)=>{
         }
     }
 
-    if(!pswd){
-        error.password = "Password can't be empty"
+    //Password validation
+    if (!pswd) {
+        error.password = "Password can't be empty";
+    } else if (pswd.length < 8) {
+        error.password = "Password must be at least 8 characters long";
     } else {
-        if(pswd.length < 8){
-            error.password = "Password length must be 8 character"
+        const hasLowerCase = /[a-z]/.test(pswd);
+        const hasUpperCase = /[A-Z]/.test(pswd);
+        const hasNumber = /[0-9]/.test(pswd);
+        const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pswd);
+        const pswdStatus = { hasLowerCase, hasUpperCase, hasNumber, hasSpecialChar };
+      
+        if (!(hasLowerCase && hasUpperCase && hasNumber && hasSpecialChar)) {
+          error.password = "Password must contain at least 1 uppercase, 1 lowercase, 1 numeric, and 1 special character";
+          error.pswdStatus = pswdStatus
         } else {
-            function hasSpecialChars(str) {
-                return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(str);
-              }
-              //Special character check
-              if(hasSpecialChars(pswd)){
-                    console.log("Specialcase Exist"+pswd)
-                }
-            for(let i=0;i<pswd.length;i++){
-                //Lowercase check
-                if(pswd.charCodeAt(i)>=97 && pswd.charCodeAt(i)<=122){
-                    console.log("Lowercase Exist"+pswd[i])
-                }
-
-                //Uppercase check
-                if(pswd.charCodeAt(i)>=65 && pswd.charCodeAt(i)<=90){
-                    console.log("Uppercase Exist"+pswd[i])
-                }
-
-                //isNumeric check
-                if(pswd.charCodeAt(i)>=48 && pswd.charCodeAt(i)<=57){
-                    console.log("Number Exist"+pswd[i])
-                }
-            }
+          console.log("Password is valid");
+          //Hashing the password
+          try {
+            const saltRounds = 10;
+            const hash = await bcrypt.hash(pswd, saltRounds);
+            //console.log(hash)
+            req.body.password = hash
+          } catch (err) {
+            console.error('Hashing error:', err);
+            throw err;
+          }
         }
     }
+
+    //Terms & condition status Validation
+    if(!terms){
+        error.terms = "Please accept the terms & conditions for successful signup"
+    }
+      
 
     if(Object.keys(error).length != 0){
         return res.send(error)
     }
     
+    //Save the User in Database
+    if(req.body != "undefined"){
+        const result = await User.insertOne(req.body)
+        res.send(result)
+    }
     console.log(req.body)
-    res.send(req.body)
+    //res.send(req.body)
 })
 
 app.listen(5002)
