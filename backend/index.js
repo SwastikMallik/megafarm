@@ -78,21 +78,13 @@ app.put("/product/:id", async (req, res)=>{
 })
 
 app.post("/signup", async (req, res)=>{
+    const {username: uname, emailid: eid, password: pswd, terms} = req.body
     let error = {}
-    let uname = req.body.username
-    let eid = req.body.emailid
-    let pswd = req.body.password
-    let terms = req.body.terms
 
 
     //Username validation
-    if(!uname){
-        error.username = "Username can't be empty"
-    } else {
-        console.log((uname).length)
-        if((uname).length < 4){
-            error.username = "Username should minimum length of 4"
-        }
+    if(!uname || uname.length < 4){
+        error.username = "Username should minimum length of 4"
     }
     
     //Email id validation
@@ -100,7 +92,6 @@ app.post("/signup", async (req, res)=>{
         error.email = "Email can't be empty"
     } else {
         let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        //let mail = "test@example.com";
         if (regex.test(eid)) {
             console.log("Valid Email address");
         } else {
@@ -110,9 +101,7 @@ app.post("/signup", async (req, res)=>{
     }
 
     //Password validation
-    if (!pswd) {
-        error.password = "Password can't be empty";
-    } else if (pswd.length < 8) {
+    if (!pswd || pswd.length < 8) {
         error.password = "Password must be at least 8 characters long";
     } else {
         const hasLowerCase = /[a-z]/.test(pswd);
@@ -126,16 +115,6 @@ app.post("/signup", async (req, res)=>{
           error.pswdStatus = pswdStatus
         } else {
           console.log("Password is valid");
-          //Hashing the password
-          try {
-            const saltRounds = 10;
-            const hash = await bcrypt.hash(pswd, saltRounds);
-            //console.log(hash)
-            req.body.password = hash
-          } catch (err) {
-            console.error('Hashing error:', err);
-            throw err;
-          }
         }
     }
 
@@ -146,16 +125,21 @@ app.post("/signup", async (req, res)=>{
       
 
     if(Object.keys(error).length != 0){
-        return res.send(error)
+        return res.status(400).json({ errors: error });
     }
     
     //Save the User in Database
-    if(req.body != "undefined"){
+    //Hashing the password
+    try {
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(pswd, saltRounds);
+        req.body.password = hash
         const result = await User.insertOne(req.body)
-        res.send(result)
+        res.status(201).json({ success: true, data: result })
+    } catch (err) {
+        console.error('Signup error:', err);
+        res.status(500).json({ error: err })
     }
-    console.log(req.body)
-    //res.send(req.body)
 })
 
 app.listen(5002)
