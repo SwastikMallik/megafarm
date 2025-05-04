@@ -10,8 +10,9 @@ mongoose.connect('mongodb+srv://swastik25:Mongodb2520@no-sql-learning.wfhnsdu.mo
 .then((result) => console.log('connected to db'))
 .catch((err) => console.log(err));
 
-const productModel = require("./models/Product");
 const User = require("./models/User");
+
+const productRouter = require("./routes/Product")
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use(express.json());
 //app.use(cors({ origin: "http://localhost:5173", allowedHeaders: ['Content-type', 'application-json'] }));
 app.use(cors());
 
+
+//Product
 
 app.get("/", (req, res)=>{
     console.log(req)
@@ -31,51 +34,9 @@ app.get("/", (req, res)=>{
     res.send(newRes)
 })
 
-app.post("/add-product", async (req, res)=>{
-    //console.log(req?.body, "sasasas")
-    if(req.body != "undefined"){
-        const result = await productModel.collection.insertOne(req.body)
-        res.send(result)
-    }
-})
+app.use('/api/products', productRouter)
 
-app.get("/products", async (req, res)=>{
-    try {
-        const products = await productModel.find();
-        res.json(products);
-      } 
-      catch (err) {
-        res.status(500).json({ message: "Error getting products", error: err });
-      }
-})
-
-app.get("/product/:id", async (req, res)=>{
-    try{
-        const getProductById = await productModel.findById(req.params.id)
-        console.log(getProductById)
-        if (!getProductById) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-        res.status(200).json(getProductById)
-    } catch(err){
-        //console.log("000", err)
-        res.status(500).json({ error: 'Server error' });
-    }
-})
-
-app.put("/product/:id", async (req, res)=>{
-    try{
-        const filter = {_id:req.params.id}
-        const updateDocument = {$set: req.body}
-        const updateData = await productModel.updateOne(filter, updateDocument)
-        console.log(updateData)
-        res.send(updateData)
-    } catch(error){
-        console.log(`Logs are: ${error}`)
-    }
-
-
-})
+//User
 
 app.post("/signup", async (req, res)=>{
     const {username: uname, emailid: eid, password: pswd, terms} = req.body

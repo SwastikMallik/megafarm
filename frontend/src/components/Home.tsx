@@ -10,15 +10,15 @@ const Home = () => {
 
 
     const getAllProducts = async function(){
-        const res = await fetch("http://localhost:5002/products")
+        const res = await fetch("http://localhost:5002/api/products")
                     .then((res)=>res.json())
-                    .then((res)=>setProduct(res))     
+                    .then((res)=>setProduct(res.data))     
     }
     //console.log(product, " products") 
 
     useEffect(()=>{
         getAllProducts()
-    },[product])
+    }, [])
 
     useEffect(()=>{
         const handleClickOutside = (event) =>{
@@ -37,7 +37,7 @@ const Home = () => {
         setSelectionID(id)
         try{ 
             // fetch product data from DB using product ID
-            const res = await fetch(`http://localhost:5002/product/${id}`)
+            const res = await fetch(`http://localhost:5002/api/products/${id}`)
             if(!res.ok){
                 throw new Error(`Server error: ${res.status}`)
             } else {
@@ -91,7 +91,7 @@ const Home = () => {
         if(errorLength == 0){
             console.log("ready form Update API call")
             try{
-                const updatedFormData = await fetch(`http://localhost:5002/product/${data._id}`,{
+                const updatedFormData = await fetch(`http://localhost:5002/api/products/${data._id}`,{
                     method : "PUT",
                     body: JSON.stringify(data),
                     headers: {
@@ -102,6 +102,8 @@ const Home = () => {
                     const responseData = await updatedFormData.json()
                     setOpenModal(false)
                     console.log(responseData, "Form updated")
+                    // Refresh product list after edit
+                    getAllProducts()
                 } else {
                     throw new Error(`${updatedFormData.status}`)
                 }

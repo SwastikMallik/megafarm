@@ -40,7 +40,7 @@ const AddProduct = () => {
         const valLength = Object.keys(validateFormData()).length
         if(valLength === 0){
             try{
-                const res = await fetch("http://localhost:5002/add-product", {
+                const res = await fetch("http://localhost:5002/api/products", {
                     method: 'post',
                     body: JSON.stringify(
                         product
