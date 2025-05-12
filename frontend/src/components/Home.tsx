@@ -61,10 +61,10 @@ const Home = () => {
         e.preventDefault()
         const {name, value} = e.target
         //console.log(`name: ${name} & value: ${value}`)
-        setData({
-            ...data,
-            [name] : value
-        })
+        setData((prev)=>({
+            ...prev,
+            [name]: value
+        }))
     }
 
     const validationEditForm = function (){
